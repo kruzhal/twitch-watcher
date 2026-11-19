@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10101a">
+  <title>Twitch Watcher — Панель управления</title>
+  <link rel="stylesheet" href="/app.css?v=20261113">
+  <script src="/app.js?v=20261113" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#view-heading">К содержимому</a>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <main id="auth" class="auth-shell hidden">
+    <section class="auth-card">
+      <div class="brand-mark large"><span>◉</span></div>
+      <p class="eyebrow">TWITCH WATCHER</p>
+      <h1 id="auth-title">Панель управления</h1>
+      <p id="auth-copy" class="muted">Войди, чтобы управлять ботом и смотреть состояние сервера.</p>
+      <form id="login-form" class="auth-form hidden">
+        <label for="login-password">Пароль панели</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        <button class="button primary full" type="submit">Войти <span>→</span></button>
+      </form>
+      <form id="setup-form" class="auth-form hidden">
+        <label for="bootstrap-token">Одноразовый код настройки</label>
+        <input id="bootstrap-token" name="bootstrap_token" type="password" autocomplete="one-time-code" required>
+        <label for="new-password">Придумай пароль панели</label>
+        <input id="new-password" name="password" type="password" minlength="16" autocomplete="new-password" required>
+        <small>Не менее 16 символов. Пароль будет храниться только на сервере в виде хеша.</small>
+        <button class="button primary full" type="submit">Создать пароль <span>→</span></button>
+      </form>
+      <p id="auth-error" class="form-error" role="alert"></p>
+      <div class="auth-foot"><span class="secure-dot"></span> Защищённое соединение · доступ владельца</div>
+    </section>
+  </main>
+
+  <div id="app" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span>◉</span></div>
+        <div><strong>Twitch Watcher</strong><small>Панель управления</small></div>
+      </div>
+      <div class="side-label">УПРАВЛЕНИЕ</div>
+      <nav class="nav-list" aria-label="Разделы">
+        <button class="nav-item active" aria-current="page" data-view="overview" title="Обзор" aria-label="Обзор"><span class="nav-icon">◫</span>Обзор</button>
+        <button class="nav-item" data-view="activity" title="Активность" aria-label="Активность"><span class="nav-icon">◉</span>Активность</button>
+        <button class="nav-item" data-view="channels" title="Каналы" aria-label="Каналы"><span class="nav-icon">▣</span>Каналы</button>
+        <button class="nav-item" data-view="catalog" title="База поиска" aria-label="База поиска"><span class="nav-icon">▤</span>База поиска</button>
+        <button class="nav-item" data-view="words" title="Фразы" aria-label="Фразы"><span class="nav-icon">⌕</span>Фразы</button>
+        <button class="nav-item" data-view="logs" title="Журнал" aria-label="Журнал"><span class="nav-icon">≋</span>Журнал</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="secure-card"><span class="secure-icon">✦</span><div><b>Доступ защищён</b><small>Только твоя панель</small></div></div>
+        <button id="logout" class="nav-item logout"><span class="nav-icon">↗</span>Выйти</button>
+      </div>
+    </aside>
+
+    <main class="main-area" id="main-content">
+      <header class="topbar">
+        <div class="mobile-brand"><div class="brand-mark"><span>◉</span></div><b>Twitch Watcher</b></div>
+        <div class="breadcrumbs"><span>Панель</span><i>/</i><b id="page-crumb">Обзор</b></div>
+        <div class="top-actions"><span class="secure-pill"><span class="secure-dot"></span>Доступ владельца</span><button id="refresh" class="icon-button" title="Обновить данные" aria-label="Обновить данные">⟳</button><button id="mobile-logout" class="mobile-logout button secondary" type="button">Выйти</button></div>
+      </header>
+
+      <div class="content-wrap">
+        <p id="connection-notice" class="connection-notice hidden" role="alert"></p>
+        <section class="view active" id="view-overview">
+          <div class="page-heading"><div><p class="eyebrow">МОНИТОРИНГ В РЕАЛЬНОМ ВРЕМЕНИ</p><h1 id="view-heading" tabindex="-1">Центр мониторинга<span class="accent-dot">.</span></h1><p class="muted">Состояние Twitch Watcher и быстрые действия.</p></div><div class="updated-label">Обновлено <span id="updated-at">—</span></div></div>
+          <div class="hero-card">
+            <div class="hero-copy"><div class="live-tag"><span class="pulse"></span><span id="service-label">Проверяю службу</span></div><h2>Твой бот <span id="hero-state">подключается</span></h2><p id="hero-note">Проверяю состояние службы и серверные показатели.</p></div>
+            <div class="hero-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit-core">◉</div><div class="orbit-spark">✦</div></div>
+            <div class="hero-actions"><button id="restart-button" class="button light">↻ Перезапустить</button><button id="service-toggle" class="button ghost-light">Остановить</button></div>
+          </div>
+          <article class="info-card health-card">
+            <div class="card-title"><span>◉</span><h2>Живая диагностика <small id="bot-version">—</small></h2></div>
+            <div class="health-grid">
+              <div class="info-row"><span>Twitch</span><b id="twitch-health">—</b></div>
+              <div class="info-row"><span>Telegram API</span><b id="telegram-health">—</b></div>
+              <div class="info-row"><span>Подтверждено чатов</span><b id="chat-health">—</b></div>
+              <div class="info-row"><span>Очередь уведомлений</span><b id="queue-health">—</b></div>
+              <div class="info-row"><span>В эфире из базы</span><b id="live-health">—</b></div>
+              <div class="info-row"><span>Последний сигнал бота</span><b id="heartbeat-health">—</b></div>
+            </div>
+            <p id="health-error" class="form-error" role="status"></p>
+          </article>
+          <div class="metric-grid">
+            <article class="metric-card"><div class="metric-head"><span>ПАМЯТЬ</span><span class="metric-icon violet">◧</span></div><strong id="ram-value">—</strong><div class="meter"><span id="ram-meter"></span></div><small id="ram-sub">Использование RAM</small></article>
+            <article class="metric-card"><div class="metric-head"><span>ДИСК</span><span class="metric-icon blue">▤</span></div><strong id="disk-value">—</strong><div class="meter blue-meter"><span id="disk-meter"></span></div><small id="disk-sub">Использование хранилища</small></article>
+            <article class="metric-card"><div class="metric-head"><span>КАНАЛЫ</span><span class="metric-icon pink">◉</span></div><strong id="channels-value">—</strong><small id="channels-sub">Выбрано тобой</small><div class="metric-footer"><span class="tiny-dot"></span><span id="monitoring-label">Проверяю мониторинг</span></div></article>
+            <article class="metric-card"><div class="metric-head"><span>ПОИСКОВЫЕ ФРАЗЫ</span><span class="metric-icon amber">⌕</span></div><strong id="words-value">—</strong><small>Активных правил поиска</small><div class="metric-footer"><span class="tiny-dot"></span><span id="matches-value">—</span> совпадений сохранено</div></article>
+          </div>
+          <div class="section-heading"><div><p class="eyebrow">БЫСТРЫЙ ДОСТУП</p><h2>Управление ботом</h2></div></div>
+          <div class="quick-grid">
+            <button class="quick-card" data-view="catalog"><span class="quick-icon violet">▣</span><span><b>База поиска</b><small>CSV, включение и приоритеты</small></span><span class="quick-arrow">→</span></button>
+            <button class="quick-card" data-view="words"><span class="quick-icon amber">⌕</span><span><b>Поисковые фразы</b><small>Добавить или удалить фразу</small></span><span class="quick-arrow">→</span></button>
+            <button class="quick-card" data-view="activity"><span class="quick-icon pink">◉</span><span><b>Активность</b><small>Старт, конец, название и категория</small></span><span class="quick-arrow">→</span></button>
+          </div>
+          <div class="bottom-grid"><article class="info-card"><div class="card-title"><span>◇</span><h2>Служба</h2></div><div class="info-row"><span>Последний запуск</span><b id="active-since">—</b></div><div class="info-row"><span>Перезапусков</span><b id="restart-count">—</b></div><div class="info-row"><span>Средняя нагрузка</span><b id="load-value">—</b></div></article><article class="info-card"><div class="card-title"><span>✦</span><h2>Состояние мониторинга</h2></div><div class="info-row"><span>Каналы для уведомлений</span><b id="manual-count">—</b></div><div class="info-row"><span>Подтверждено активных чатов</span><b id="auto-count">—</b></div><div class="info-row"><span>Лимит читаемых чатов</span><b>100 · по рейтингу CSV</b></div></article></div>
+          <div class="section-heading match-heading"><div><p class="eyebrow">ПОСЛЕДНИЕ СОБЫТИЯ</p><h2>Найденные совпадения</h2></div></div>
+          <div id="matches-list" class="match-list table-card"></div>
+        </section>
+
+        <section class="view" id="view-activity">
+          <div class="page-heading"><div><p class="eyebrow">ТОЛЬКО ВЫБРАННЫЕ КАНАЛЫ</p><h1 tabindex="-1">Активность<span class="accent-dot">.</span></h1><p class="muted">Уведомления о запуске, завершении, смене названия и категории.</p></div><button class="button primary" id="activity-refresh">⟳ Обновить</button></div>
+          <div class="table-card"><div class="table-head"><div><h2>Состояние каналов</h2><p>Проверяется Twitch примерно раз в минуту</p></div><span id="activity-count" class="count-pill">0 каналов</span></div><div id="activity-list" class="channel-grid"></div></div>
+          <div class="note-card"><span>✦</span><p>Уведомления об активности включены только для каналов, которые ты добавил вручную. Поиск фраз идёт в активных чатах из импортированной базы: до 100 одновременно, по рейтингу CSV.</p></div>
+        </section>
+
+        <section class="view" id="view-channels">
+          <div class="page-heading"><div><p class="eyebrow">МОНИТОРИНГ</p><h1 tabindex="-1">Каналы<span class="accent-dot">.</span></h1><p class="muted">Выбранные тобой каналы получают уведомления об активности.</p></div></div>
+          <form id="channel-form" class="add-bar"><span class="add-symbol">＋</span><label class="field-label" for="channel-input">Логин канала<input id="channel-input" maxlength="25" placeholder="Введи Twitch-логин, например shroud" autocomplete="off" required></label><button class="button primary" type="submit">Добавить канал</button></form>
+          <div class="table-card"><div class="table-head"><div><h2>Текущий список</h2><p>Не более 100 выбранных каналов</p></div><span id="channel-count" class="count-pill">0 каналов</span></div><div id="channel-table" class="data-list"></div></div>
+        </section>
+
+        <section class="view" id="view-catalog">
+          <div class="page-heading"><div><p class="eyebrow">КАТАЛОГ ЧАТОВ</p><h1 tabindex="-1">База поиска<span class="accent-dot">.</span></h1><p class="muted">До 100 активных включённых каналов, по возрастанию приоритета. Изменения применяются при следующей проверке.</p></div></div>
+          <article class="info-card">
+            <h2>Импорт CSV</h2><p class="muted">Колонка login обязательна, rank — необязательна. До 2 МБ / 20000 строк. Ручные уведомления, история и правила не удаляются; выключенные каналы остаются выключенными при повторном импорте.</p>
+            <form id="catalog-import-form" class="catalog-toolbar">
+              <input id="catalog-file" type="file" accept=".csv,text/csv" aria-label="CSV со списком каналов" required>
+              <select id="catalog-import-mode" aria-label="Режим импорта"><option value="merge">Добавить / обновить приоритеты</option><option value="replace">Заменить весь список поиска</option></select>
+              <button id="catalog-preview" class="button primary" type="submit">Проверить CSV</button>
+              <button id="catalog-apply" class="button" type="button" disabled>Импортировать</button>
+            </form>
+            <p id="catalog-preview-info" class="muted" role="status">Сначала проверь файл. При замене потребуется подтверждение.</p>
+          </article>
+          <form id="catalog-add-form" class="add-bar"><label class="field-label" for="catalog-add-login">Логин канала<input id="catalog-add-login" maxlength="25" placeholder="Добавить Twitch-логин" aria-label="Новый логин" required></label><label class="field-label" for="catalog-add-priority">Приоритет<input id="catalog-add-priority" type="number" min="1" max="2147483647" step="1" value="1000" aria-label="Приоритет нового канала" required></label><button class="button primary" type="submit">Добавить в базу</button></form>
+          <form id="catalog-search-form" class="catalog-toolbar"><input id="catalog-search" maxlength="100" placeholder="Найти логин" aria-label="Поиск в каталоге"><select id="catalog-enabled" aria-label="Включён ли поиск"><option value="all">Все каналы</option><option value="yes">Только включённые</option><option value="no">Только выключенные</option></select><button class="button primary" type="submit">Найти</button></form>
+          <div class="table-card"><div class="table-head"><div><h2>Каналы поиска</h2><p>Меньшее число — выше приоритет. Выключение относится только к чтению чата.</p></div><span id="catalog-count" class="count-pill">—</span></div><div id="catalog-list"></div><div class="catalog-toolbar"><button id="catalog-prev" class="button" type="button">← Назад</button><span id="catalog-page" aria-live="polite">—</span><button id="catalog-next" class="button" type="button">Далее →</button></div></div>
+        </section>
+
+        <section class="view" id="view-words">
+          <div class="page-heading"><div><p class="eyebrow">ПОИСК В ЧАТЕ</p><h1 tabindex="-1">Фразы<span class="accent-dot">.</span></h1><p class="muted">Совпадения приходят в Telegram. Отдельное слово ищется с границами слова.</p></div></div>
+          <form id="word-form" class="add-bar"><span class="add-symbol">＋</span><label class="field-label" for="word-input">Поисковая фраза<input id="word-input" maxlength="200" placeholder="Например: gg ez или доброе утро" autocomplete="off" required></label><button class="button primary" type="submit">Добавить фразу</button></form>
+          <div class="table-card"><div class="table-head"><div><h2>Фразы для поиска</h2><p>Слова сравниваются без учёта регистра</p></div><span id="word-count" class="count-pill">0 фраз</span></div><div id="word-list" class="data-list"></div></div>
+          <article class="info-card filters-card"><h2>Исключения и защита от повторов</h2><p class="muted">Сообщения с исключённой фразой игнорируются и для поиска фраз, и для выбранных авторов. Уведомления об эфирах не затрагиваются.</p>
+            <form id="exclude-form" class="add-bar"><input id="exclude-input" maxlength="200" placeholder="Фраза-исключение" aria-label="Фраза-исключение" required><button class="button primary" type="submit">Добавить исключение</button></form>
+            <div id="exclude-list"></div>
+            <form id="cooldown-form" class="catalog-toolbar"><label for="cooldown-seconds">Интервал одинаковых уведомлений, секунд</label><input id="cooldown-seconds" type="number" min="0" max="86400" step="1" value="60" required><button class="button primary" type="submit">Сохранить интервал</button></form>
+            <p class="muted">0 — отключить. Повтор определяется по каналу, автору, тексту и правилу. Все уникальные сообщения остаются в истории, даже если уведомление о повторе не отправлено.</p>
+          </article>
+        </section>
+
+        <section class="view" id="view-logs">
+          <div class="page-heading"><div><p class="eyebrow">ДИАГНОСТИКА</p><h1 tabindex="-1">Журнал<span class="accent-dot">.</span></h1><p class="muted">Последние сообщения службы Twitch Watcher.</p></div><button class="button primary" id="logs-refresh">⟳ Обновить журнал</button></div>
+          <div class="log-card"><div class="log-toolbar"><span class="log-dot"></span>twitch-watcher.service<span class="log-live">последние 24 часа</span></div><pre id="log-output">Загружаю журнал…</pre></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="confirm-modal" class="modal" aria-labelledby="confirm-title" aria-describedby="confirm-copy">
+    <div class="modal-card"><div class="modal-icon">↻</div><p class="eyebrow">ПОДТВЕРЖДЕНИЕ</p><h2 id="confirm-title">Перезапустить бота?</h2><p id="confirm-copy" class="muted">Бот будет перезапущен и автоматически подключится снова.</p><div class="modal-actions"><button autofocus id="confirm-cancel" class="button secondary">Отмена</button><button id="confirm-yes" class="button primary">Подтвердить</button></div></div>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+</body>
+</html>

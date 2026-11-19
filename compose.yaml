@@ -1,0 +1,8 @@
+services:
+  twitch-watcher:
+    build: .
+    container_name: twitch-watcher
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data

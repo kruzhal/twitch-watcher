@@ -1,0 +1,32 @@
+# Private configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*auth*.json
+subscription.url
+subscription.raw
+# Runtime and user data
+data/
+*.sqlite*
+*.db
+*.log
+*.log.*
+# Local environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+node_modules/
+# Server audit and local comparison records
+SERVER_*.json
+SERVER_BASELINE.md
+LOCAL_COMPARISON.md
+# Backups and generated bundles
+*.backup
+*.bak
+*.before-*
+*.zip
+*.tar.gz
